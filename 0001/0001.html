@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Standard MIDI File 再生テスト</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <!-- Optional theme -->
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+      <style>
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  min-height: 100%;
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  margin-top:60px;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+
+#footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+#holder {
+  border: 4px dashed gray;
+}
+#holder:hover {
+  border: 4px dashed black;
+}
+#holder.hover {
+  border: 4px dashed green;
+}
+        
+      </style>
+    </head>
+   <body >
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+    <div class="navbar-header">
+    <a class="navbar-brand" href="javascript:history.back()">前のページへ</a>
+    </div>
+    <div class="navbar-header">
+    <a class="navbar-brand" href="#">Standard MIDI File 再生テスト</a>
+    </div>
+    </div> 
+</nav>
+     <div class="container">
+       <div id="holder" class="container">
+          ここにファイルをドロップしてください。
+       </div>
+       <div id="info"></div>
+     </div>
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted">作成:S.F.</p>
+      </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.0.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="scripts/SMFreader.js" ></script>
+    <script type="text/javascript">
+      /// <reference path="/scripts/jquery-2.1.0-vsdoc.js" />
+      var midi = null;
+
+      $().ready(function ()
+      {
+        var holder = $('#holder');
+        if (window.File && window.FileReader)
+        {
+          holder.on('dragover', function () { $(this).addClass('hover'); return false; });
+//          holder.ondragover = function () { this.className = 'container hover'; return false; };
+          holder.on('dragend',function () { $(this).removeClass ('hover'); return false; });
+          holder.on('drop',function (e)
+          {
+            this.className = '';
+            e.preventDefault();
+            var file = e.originalEvent.dataTransfer.files[0],
+               reader = new FileReader();
+            reader.onload = function (event)
+            {
+              decodeSMF(event.target.result);
+              $('#holder').text("SMFファイル(" + file.name + ")を読み込みました。");
+	            dumpFileInfo( $('#info')[0]);
+            };
+            reader.onerror = function (event)
+            {
+              alert("Error: " + reader.error);
+            };
+            reader.readAsArrayBuffer(file);
+            return false;
+          });
+        }
+        /*
+        if (navigator.requestMIDIAccess)
+        {
+        navigator.requestMIDIAccess({ sysex: true })
+        .then(function (access, options)
+        {
+        midi = access;
+        inputs = midi.inputs();
+        outputs = midi.outputs();
+
+        for (var i = 0, len = inputs.length; i < len; ++i)
+        {
+        var input = inputs[i];
+        console.log(input.id);
+        console.log(input.manufacturer);
+        console.log(input.name);
+        console.log(input.type);
+        console.log(input.version);
+        input.onmidimessage = function (event)
+        {
+        //                   console.log(event.receivedTime);
+        //                   console.log(event.data);
+        outputs[1].send(event.data);
+        outputs[2].send(event.data);
+        //outputs[0].send(event.data);
+        };
+
+        }
+
+        //*
+        midi.outputs().values(function (output)
+        {
+        console.log(output.id);
+        console.log(output.manufacturer);
+        console.log(output.name);
+        console.log(output.type);
+        console.log(output.version);
+        });//
+        }
+        , function (msg) { alert("MIDIAccessオブジェクトの取得に失敗しました。:" + msg); }
+        );
+        }*/
+      });
+      </script>
+    </body>
+</html>
