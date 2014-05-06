@@ -19,9 +19,9 @@ MidiEvent.prototype.toFormatStr = function ()
   this.event.toFormatStr();
 }
 
-MidiEvent.prototype.play = function (sequencer, time,step)
+MidiEvent.prototype.play = function (sequencer, time,step,out)
 {
-  this.event.play(sequencer,this,time,step);
+  this.event.play(sequencer,this,time,step,out);
 }
 
 function Note(note,gate,velocity)
@@ -39,11 +39,11 @@ Note.prototype.compile = function()
   this.noteoff.set([0x90, this.note, 0]);
 }
 
-Note.prototype.play = function (sequencer, event,time,step)
+Note.prototype.play = function (sequencer, event,time,step,out)
 {
 //  console.log(performance.now() + " " + time + " " + this.toFormatStr());
-  sequencer.send([0x90 | event.channel,this.note,this.velocity],time);
-  sequencer.send([0x80 | event.channel,this.note,0x40],time + sequencer.convertStepToTime(this.gate));
+  sequencer.send([0x90 | event.channel,this.note,this.velocity],time,out);
+  sequencer.send([0x80 | event.channel,this.note,0x40],time + sequencer.convertStepToTime(this.gate),out);
 }
 
 var noteData = [];
@@ -74,9 +74,9 @@ ProgramChange.prototype.compile = function ()
   this.data.set([0xc0,this.val]);
 }
 
-ProgramChange.prototype.play = function (sequencer, event, time,step)
+ProgramChange.prototype.play = function (sequencer, event, time,step,out)
 {
-  sequencer.send([0xc0 | event.channel,this.val],time);
+  sequencer.send([0xc0 | event.channel,this.val],time,out);
 }
 
 ProgramChange.prototype.toFormatStr = function ()
@@ -96,9 +96,9 @@ ChannelPressure.prototype.compile = function ()
   this.data.set([0xd0,this.val]);
 }
 
-ChannelPressure.prototype.play = function (sequencer, event, time,step)
+ChannelPressure.prototype.play = function (sequencer, event, time,step,out)
 {
-  sequencer.send([0xd0 | event.channel, this.val], time);
+  sequencer.send([0xd0 | event.channel, this.val], time,out);
 }
 
 ChannelPressure.prototype.toFormatStr = function()
@@ -119,9 +119,9 @@ PolyphonicKeyPressure.prototype.compile = function ()
   this.data.set([0xa0, this.note, this.value]);
 }
 
-PolyphonicKeyPressure.prototype.play = function (sequencer, event, time,step)
+PolyphonicKeyPressure.prototype.play = function (sequencer, event, time,step,out)
 {
-  sequencer.send([0xa0 | event.channel, this.note, this.value], time);
+  sequencer.send([0xa0 | event.channel, this.note, this.value], time,out);
 }
 
 PolyphonicKeyPressure.prototype.toFormatStr = function()
@@ -142,10 +142,10 @@ PitchBend.prototype.compile = function ()
   this.set([0xe0,this.val >> 7,this.val & 0x7f]);
 }
 
-PitchBend.prototype.play = function (sequencer, event, time, step)
+PitchBend.prototype.play = function (sequencer, event, time, step,out)
 {
-  console.log(this.toFormatStr() + " " + [0xe0 | event.channel, this.val & 0x7f, this.val >> 7 ].toString());
-  sequencer.send([0xe0 | event.channel, this.val & 0x7f, this.val >> 7], time);
+  //console.log(this.toFormatStr() + " " + [0xe0 | event.channel, this.val & 0x7f, this.val >> 7 ].toString());
+  sequencer.send([0xe0 | event.channel, this.val & 0x7f, this.val >> 7], time,out);
 }
 
 PitchBend.prototype.toFormatStr = function()
@@ -166,9 +166,9 @@ ControlChange.prototype.compile = function ()
   this.data.set([0xB0, this.val1, this.val2]);
 }
 
-ControlChange.prototype.play = function (sequencer, event, time,step)
+ControlChange.prototype.play = function (sequencer, event, time,step,out)
 {
-  sequencer.send([0xB0 | event.channel,this.val1,this.val2],time);
+  sequencer.send([0xB0 | event.channel,this.val1,this.val2],time,out);
 }
 
 var cc = [
@@ -328,14 +328,14 @@ SysEx.prototype.compile = function()
  
 }
 
-SysEx.prototype.play = function (sequencer, event, time,step)
+SysEx.prototype.play = function (sequencer, event, time,step,out)
 {
   //  for (var i = 0; i < this.data.length; ++i)
   //  {
   //    sequencer.send([this.data[i]], time + i * 10);
   //  }
  //  sequencer.send(this.data, time);
-  sequencer.send(this.data, time);
+  sequencer.send(this.data, time,out);
 }
 
 SysEx.prototype.toFormatStr = function ()
@@ -500,7 +500,7 @@ MetaEvent.prototype.toFormatStr = function ()
   return str;
 }
 
-MetaEvent.prototype.play = function (sequencer, event, time,step)
+MetaEvent.prototype.play = function (sequencer, event, time,step,out)
 {
   
 }
@@ -517,7 +517,7 @@ SetTempo.prototype.setQuarterNoteMicroSec = function (value)
   this.bpm = 60.0 * 1000.0 * 1000.0 / value;
 }
 
-SetTempo.prototype.play = function (sequencer, event, time,step)
+SetTempo.prototype.play = function (sequencer, event, time,step,out)
 {
   sequencer.setTempoMap(time,step,this.bpm);
 }
@@ -527,12 +527,22 @@ SetTempo.prototype.toFormatStr = function ()
   return "Set Tempo " + this.bpm.toString();
 }
 
- 
-function Track(name,comment,output)
+
+function EndOfTrack(trackNo)
+{
+  this.trackNo = trackNo;
+}
+
+EndOfTrack.prototype = 
+{
+  play: function (sequencer, event, time,step,out){ sequencer.endOfTrack(this,time,step);},
+  toFormatStr: function(){return 'EndOfTrack ' + this.trackNo;}
+}
+
+function Track(name,comment)
 {
   this.name = name;
   this.comment = comment?comment:"";
-  this.output = output?output:null;
   this.events = [];
 }
 
@@ -548,6 +558,8 @@ function TrackInfo()
 {
   this.step = 0;
   this.index = 0;
+  this.endOfTrack = null;
+  this.output = null;
 }
 
 function Tempo(time,step,bpm,stepsPerBeat)
@@ -560,18 +572,44 @@ function Tempo(time,step,bpm,stepsPerBeat)
   this.stepsPerBeat = stepsPerBeat;
 }
 
-function Sequencer(output)
+///////////////////////////////////////////////////////////
+// シーケンサー本本体
+///////////////////////////////////////////////////////////
+function Sequencer(access)
 {
-  this.output = output;
+  var self = this;
+  this.midiAccess = access;
+  if(this.midiAccess.outputs().length > 0)
+  {
+    this.output = this.midiAccess.outputs()[0];
+  }
+
+  if(this.midiAccess.inputs().length > 0)
+  {
+    this.input = this.midiAccess.inputs()[0];
+    this.input.onmidimessage = 
+    function (midiEvent)
+    {
+      if (self.output) {
+        self.output.send(midiEvent.data);
+      }
+    }
+  }
+
   this.song = null;
   this.stepsPerBeat = 480.0;
   this.status = "stop";
-  this.trackInfos = [];
+  this.trackInfos = null;
   this.startTime = 0.0;
   this.tempoMap = [];
   this.tempo = null;
   this.initTempoMap(120.0);
   this.id = null;
+}
+
+Sequencer.prototype.setTrackOutput = function(trackNo,index)
+{
+  this.trackInfos[trackNo].output = this.midiAccess.outputs()[index];
 }
 
 Sequencer.prototype.initTempoMap = function (tempo)
@@ -598,6 +636,11 @@ Sequencer.prototype.getTime = function(step)
   return time;
 }
 
+Sequencer.prototype.endOfTrack = function (endOfTrack,time,step)
+{
+  this.trackInfos[endOfTrack.trackNo].endOfTrack = {'time':time,'step':step,'end':false};
+}
+
 Sequencer.prototype.convertStepToTime = function(step)
 {
   return this.tempo.milliSecPerStep * step;
@@ -611,29 +654,43 @@ Sequencer.prototype.setSong = function (song)
   }
   this.song = song;
   this.stepsPerBeat = song.stepsPerBeat;
+  this.trackInfos = null;
   this.initTracks();
-  if(this.output)
-  {
-    $(this).trigger('ready');
-  }
+  $(this).trigger('ready');
 }
 
-Sequencer.prototype.setOutput = function (output)
-{
-  if(output)
-  {
-    this.output = output;
-    
-  }
-}
+//Sequencer.prototype.setOutput = function (output)
+//{
+//  if(output)
+//  {
+//    this.output = output;
+//    
+//  }
+//}
 
 Sequencer.prototype.initTracks = function ()
 {
+  this.endOfTrackCount = 0;
   this.initTempoMap(120.0);
-  this.trackInfos = [];
-  for (var i = 0,l = this.song.tracks.length; i < l; ++i)
+  if (!this.trackInfos)
   {
-    this.trackInfos.push(new TrackInfo());
+    this.trackInfos = [];
+    for (var i = 0, l = this.song.tracks.length; i < l; ++i)
+    {
+      var trackInfo = new TrackInfo();
+      trackInfo.output = this.midiAccess.outputs()[0];
+      this.trackInfos.push(trackInfo);
+    }
+  } else
+  {
+    for (var i = 0, l = this.song.tracks.length; i < l; ++i)
+    {
+      var trackInfo = this.trackInfos[i];
+      trackInfo.step = 0;
+      trackInfo.index = 0;
+      trackInfo.endOfTrack = null;
+    }
+
   }
 }
 
@@ -648,6 +705,7 @@ Sequencer.prototype.start = function ()
   this.play();
   var self = this;
   this.id = window.setInterval(function () { self.play(); }, 100);
+  $(this).trigger('playing');
 }
 
 Sequencer.prototype.stop = function ()
@@ -660,6 +718,7 @@ Sequencer.prototype.stop = function ()
     allSoundOff(this.output);
   }
   this.status = "stopped";
+  $(this).trigger('stopped');
 }
 
 Sequencer.prototype.pause = function()
@@ -682,7 +741,7 @@ Sequencer.prototype.play = function ()
     var trackInfo = this.trackInfos[i];
     var index = trackInfo.index;
 
-    while (index < track.events.length)
+    while (!trackInfo.endOfTrack && index < track.events.length)
     {
       var event = track.events[index];
       var step = event.step;
@@ -691,7 +750,7 @@ Sequencer.prototype.play = function ()
       {
         trackInfo.step += step;
         var time = this.getTime(trackInfo.step);
-        event.play(this, time, trackInfo.step);
+        event.play(this, time, trackInfo.step,trackInfo.output);
         ++index;
       } else
       {
@@ -699,10 +758,22 @@ Sequencer.prototype.play = function ()
       }
     }
     trackInfo.index = index;
+    if (trackInfo.endOfTrack && (!trackInfo.endOfTrack.end))
+    {
+      if (trackInfo.endOfTrack.time < performance.now())
+      {
+        trackInfo.endOfTrack.end = true;
+        this.endOfTrackCount++;
+        if (len == this.endOfTrackCount)
+        {
+          this.stop();
+        }
+      }
+    }
   }
 }
 
-Sequencer.prototype.send = function (event, time)
+Sequencer.prototype.send = function (event, time,out)
 {/*
   var hex = "";
   for (var i = 0; i < event.length; ++i)
@@ -710,5 +781,5 @@ Sequencer.prototype.send = function (event, time)
     hex += ('00' + event[i].toString(16)).slice(-2) + " ";
   }
   console.log(performance.now() + " " + time + " " + hex);*/
-  this.output.send(event, time + this.startTime);
+  out.send(event, time + this.startTime);
 }
