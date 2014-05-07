@@ -247,18 +247,24 @@ document.getElementById("inputTextButton").addEventListener("click", function(){
 //    document.getElementById("divSetOutput").style.setProperty("color", "#ffffff");*/
 //}
 
-function panic(out)
+function panic()
 {
-  for (var i = 0; i < 16; ++i)
+  var outputs = sequencer.midiAccess.outputs();
+  for(var j = 0,end = outputs.length;j < end;++j)
   {
-    var msg = [0xB0 | i, 0x79, 0x00];
-    out.send(msg);
+    var out = outputs[j];
+    for (var i = 0; i < 16; ++i)
+    {
+      var msg = [0xB0 | i, 0x79, 0x00];
+      out.send(msg);
 
-    var msg = [0xB0 | i, 0x7B, 0x00];
-    out.send(msg);
+      var msg = [0xB0 | i, 0x7B, 0x00];
+      out.send(msg);
 
-    var msg = [0xB0 | i, 0x78, 0x00];
-    out.send(msg);
+      var msg = [0xB0 | i, 0x78, 0x00];
+      out.send(msg);
+    }
+    
   }
 }
 
@@ -597,34 +603,47 @@ function dumpInfo(target)
 function displayInfo(song)
 {
   $('#info').html('');
-  var table = $('<table>', { 'id': 'songinfo','class':'table table-bordered' })
-  .append($('<thead>').append($('<tr>').html('<th>Trk</th><th>Name</th><th>Port</th><th>CH</th><th>Data</th>')))
+  var select = $('<select>', { 'type': 'text', 'class': 'input-sm', 'style': 'padding: 0;'})
+  var outputs = sequencer.midiAccess.outputs();
+  for(var j = 0,len = outputs.length;j < len;++j)
+  {
+    var output = outputs[j];
+    $('<option>',{'style':'border:1px;padding 1px;'}).val(j).text(output.name).appendTo(select);
+  };
+
+  var table = $('<table>', { 'id': 'songinfo','class':'table table-striped table-condensed' })
+  .append($('<thead>').append($('<tr>').html('<th>Trk</th><th>Name</th><th id="allSelectPort"></th><th>CH</th><th>Data</th>')))
   .appendTo('#info');
   var tbody = $('<tbody>').appendTo('#songinfo');
+  var allPortSelect =
+    select.clone()
+    .on('change', function (e)
+    { var self = $(e.target);
+      sequencer.setTrackOutputAll(parseInt(self.val()));
+      for(var i = 0;i < song.tracks.length;++i)
+      {
+        $('#output' + ('00' + i.toString()).slice(-2)).val(self.val());
+      }
+    }).appendTo('#allSelectPort');
+
   for(var i = 0;i < song.tracks.length;++i)
   {
     var row = $('<tr>',{'id':'track' + i});
     var track = song.tracks[i];
 
-    var select = $('<select>', { 'type': 'text', 'class': 'form-control', 'trackNo': i.toString(), 'id': 'output' + ('00' + i.toString()).slice(-2) })
+    var s = select.clone();
+    s.attr('id','output' + ('00' + i.toString()).slice(-2) )
+    .attr('trackNo', i.toString())
     .on('change', function (e)
     {
       var self = $(e.target);
-      sequencer.setTrackOutput(parseInt(self.attr('trackNo')),parseInt(self.val()));
-    })
-    ;
-    
-    var outputs = sequencer.midiAccess.outputs();
-    for(var j = 0,len = outputs.length;j < len;++j)
-    {
-      var output = outputs[j];
-      $('<option>').val(j).text(output.name).appendTo(select);
-    };
+      sequencer.setTrackOutput(parseInt(self.attr('trackNo')), parseInt(self.val()));
+    });
     
     row
      .append($('<td>').text(i))
      .append($('<td>').text(track.name))
-     .append($('<td>').append(select))
+     .append($('<td>').append(s))
      .append($('<td>').text('CH'))
      .append($('<td>').append($('<canvas>',{'id':'trackData' + i,'height':'12px','width':'300px'})));
     tbody.append(row);
@@ -747,27 +766,12 @@ $().ready(function ()
     });
 
     // Panic Button
-    //$('#resetAllController').on('click', function (event)
-    //{
-    //  // check whether midi out is set or not
-    //  if (typeof mOut != "object")
-    //  {
-    //    showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
-    //    return;
-    //  }
-
-    //  panic(mOut);
-
-    //  // control button
-    //  //document.getElementById("start").removeAttribute("disabled");
-
-    //  var type = "click";
-    //  var e = document.createEvent('MouseEvent');
-    //  var b = document.getElementById("stop");
-    //  e.initEvent(type, true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-    //  b.dispatchEvent(e);
-
-    //});
+    $('#resetAllController').on('click', function (event)
+    {
+      // check whether midi out is set or not
+      panic();
+      event.preventDefault();
+    });
 
   },
   // MIDIAccess 取得失敗

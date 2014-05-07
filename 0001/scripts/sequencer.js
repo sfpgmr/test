@@ -612,6 +612,17 @@ Sequencer.prototype.setTrackOutput = function(trackNo,index)
   this.trackInfos[trackNo].output = this.midiAccess.outputs()[index];
 }
 
+Sequencer.prototype.setTrackOutputAll = function(index)
+{
+  var trackInfos = this.trackInfos;
+  var output = this.midiAccess.outputs()[index];
+  for(var i = 0,end = trackInfos.length;i < end;++i)
+  {
+    trackInfos[i].output = output;
+  }
+}
+
+
 Sequencer.prototype.initTempoMap = function (tempo)
 {
   this.tempoMap = [];

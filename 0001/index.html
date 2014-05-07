@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-
 <html lang="ja">
-    <head>
-      <meta charset="utf-8" />
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>NSX-39 Test App</title>
-      <!-- Latest compiled and minified CSS -->
-      <!-- 
-      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-      -->
-      <style>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SMF File Player</title>
+    <!-- Latest compiled and minified CSS -->
+          <!-- 
+            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+            -->
+    <style>
         /*
       @font-face {
       font-family: 'sf-sans-serif';
       src: url('/fonts/ロゴたいぷゴシック.otf');
       }
-
+      
       @font-face {
       font-family: 'sf-serif';
       src: url('/fonts/ロゴたいぷゴシック.otf');
@@ -37,83 +36,83 @@
         font-family: 'sf-monospace';
         src: url('/fonts/ロゴたいぷゴシック.otf');
       }*/
+      
+    </style>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <!-- Optional theme -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/slider.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+          <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+    <style>
+      /* Sticky footer styles
+      -------------------------------------------------- */
+      html {
+        position: relative;
+        min-height: 100%;
+      }
+      body {
+        /* Margin bottom by footer height */
+        margin-bottom: 60px;
+      }
+      #footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        height: 40px;
+        background-color: #f5f5f5;
+      }
+      
+      
+      /* Custom page CSS
+      -------------------------------------------------- */
+      /* Not required for template or sticky footer method. */
+      
+      body > #wrap > .container {
+        padding: 60px 15px 0;
+      }
+      .container .text-muted {
+        margin: 20px 0;
+      }
+      
+      #footer > .container {
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      
+      code {
+        font-size: 80%;
+      }  
+              .pad-lr-min {
+                padding-left: 1px; 
+                padding-right: 1px; 
+              }
+      #footer > .container {
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      #holder {
+        border: 4px dashed gray;
+        min-height: 80px;
+      }
+      #holder:hover {
+        border: 4px dashed black;
+      }
+      #holder.hover {
+        border: 4px dashed green;
+      }
+    </style>
 
-      </style>
-      <link rel="stylesheet" href="/css/bootstrap.min.css">
-      <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
-      <!-- Optional theme -->
-      <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-      <link rel="stylesheet" href="/css/slider.css">
-      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-      <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-      <![endif]-->
-      <style>
-        /* Sticky footer styles
-        -------------------------------------------------- */
-        html {
-          position: relative;
-          min-height: 100%;
-        }
-        body {
-          /* Margin bottom by footer height */
-          margin-bottom: 60px;
-        }
-        #footer {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          /* Set the fixed height of the footer here */
-          height: 40px;
-          background-color: #f5f5f5;
-        }
 
-
-        /* Custom page CSS
-        -------------------------------------------------- */
-        /* Not required for template or sticky footer method. */
-
-        body > #wrap > .container {
-          padding: 60px 15px 0;
-        }
-        .container .text-muted {
-          margin: 20px 0;
-        }
-
-        #footer > .container {
-          padding-right: 15px;
-          padding-left: 15px;
-        }
-
-        code {
-          font-size: 80%;
-        }  
-                .pad-lr-min {
-                  padding-left: 1px; 
-                  padding-right: 1px; 
-                }
-        #footer > .container {
-          padding-right: 15px;
-          padding-left: 15px;
-        }
-        #holder {
-          border: 4px dashed gray;
-          min-height: 80px;
-        }
-        #holder:hover {
-          border: 4px dashed black;
-        }
-        #holder.hover {
-          border: 4px dashed green;
-        }
-      </style>
-
-
-    </head>
-   <body>
-   <div id="wrap">
+  </head>
+  <body>
+    <div id="wrap">
       <div class="navbar navbar-default navbar-fixed-top" id="navbar.bs">
         <div class="container">
           <div class="navbar-header">
@@ -122,186 +121,167 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">(ポケミク) NSX-39 Test App</a>
+            <a class="navbar-brand" href="#">SMF File Player</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-            <!--
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="#fileImport">Import</a></li>
-                  <li><a href="#fileExport" id="fileExport">Export</a></li>
-                </ul>
-              </li>
-            -->
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Device <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="#midiOutSelM" data-toggle="dropdown">MIDI OUT</b></a></li>
-                  <li><a data-toggle="modal" href="#midiInSelM" data-toggle="dropdown">MIDI IN</b></a></li>
-                </ul>
+                              <!--
+                              <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                  <li><a data-toggle="modal" href="#fileImport">Import</a></li>
+                                  <li><a href="#fileExport" id="fileExport">Export</a></li>
+                                </ul>
+                              </li>
+                            -->
+              <li class="navbar-btn"><input id="resetAllController" class="btn btn-warning" type="button" value="Panic"></li>
+              <li class="navbar-btn">
+                <span class="btn-group">
+                  <button type="button" class="btn btn-default" id="zero" style="height:34px;"><span class="glyphicon glyphicon-fast-backward"></span></button>
+                  <button type="button" class="btn btn-default" id="start" style="height:34px;"><span id="startButton" class="glyphicon glyphicon-play"></span></button>
+                  <button type="button" class="btn btn-default" id="stop" style="height:34px;"><span class="glyphicon glyphicon-stop"></span></button>
+                </span>
               </li>
             </ul>
-            <!--
-            <ul class="nav navbar-nav navbar-right">
-              <li><a data-toggle="modal" href="#showToU" id="showToUJ">Terms of Use</a></li>
-            </ul>
-                        -->
-
+              <div class="navbar-form">
+                <span class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-heart"></span>Tempo</span>
+                  <input type="number" class="form-control" style="width: 100px;" placeholder="Set Tempo" id="tempo" value="120" />
+                </span>
+              </div>
+                          <!--
+                          <ul class="nav navbar-nav navbar-right">
+                            <li><a data-toggle="modal" href="#showToU" id="showToUJ">Terms of Use</a></li>
+                          </ul>
+                                      -->
           </div><!--/.nav-collapse -->
         </div>
       </div>
-      
-      
+
+
       <div class="container">
+                  <!--<div class="row">
+                    <div class="col-md-7">
+                      <div id="divSetOutput" class="btn btn-default">
+                        <span class="glyphicon glyphicon-log-out"></span><span id="setOutput" style="padding-left:8px;">MIDI Out Deviceを設定</span>
+                      </div>
+                      <div id="divSetInput" class="btn btn-default">
+                        <span class="glyphicon glyphicon-log-in"></span><span id="setInput" style="padding-left:8px;">MIDI Input Deviceを設定</span>
+                      </div>
+                    </div>
+                  </div>-->
+        <!-- row -->
+        <!--<div class="row" style="clear:both;">&nbsp;</div>-->
+                  <!--
+                    <ul class="nav nav-tabs" style="width:800px;">
+                      <li class="active"><a href="#pianorolltab" data-toggle="tab">Sequence</a></li>
+                    </ul>
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="pianorolltab">
+                  -->
+                  <!--
+                    <div class="row">
+                      <div class="col-md-8">
+                        <div class="input-group">
+                          <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mode <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#" id="inputTextMode"><span class="glyphicon glyphicon-pencil"></span> InputText</a></li>
+                              <li><a href="#" id="autoDoremiMode"><span class="glyphicon glyphicon-music"></span> DoReMi</a></li>
+                            </ul>
+                          </div>
+          
+                          <span class="input-group-addon" id="modeName"><span class="glyphicon glyphicon-pencil"></span> InputText</span>
+                          <input type="text" class="form-control" id="inputText" placeholder="Input Text" value="どれみふぁそらしど">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="inputTextButton">Send</button>
+                          </span>
+                        </div>
+                      </div>
+          
+                      <div class="col-md-4">
+                        <div class="input-group" style="vertical-align: auto;"><span class="glyphicon glyphicon-bullhorn"></span>Set:<span id="setletter"> -- </span>
+                        </div>
+                      </div>
+                    </div> 
+                    -->
+        <div class="row" style="clear:both;">&nbsp;</div>
         <div class="row">
-          <div class="col-md-12">
-            <p class="lead">ここでWeb MIDIを使ってNSX-39（ポケミク）をいじるアプリケーションを作成していきます。</p>
-            <p>といいながら、現在NSX-1モードでないと動きませんのであしからず。。</p>
+
+          <div class="col-md-1">
+            <div class="text-left">
+              <i class="fa fa-volume-up"></i><label style="padding:  0 5px 0 5px;"><small>Volume</small></label>
+            </div>
+          </div>
+          <div class="col-md-2" title="Volume">
+            <input id="volume" class="slider" type="text" data-slider-id="volumeSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="64" data-slider-tooltip="show" />
+          </div>
+          <div class="col-md-1">
+            <div class="text-left">
+              <label style="padding:  0 5px 0 5px;"><small>Mod.</small></label>
+            </div>
+          </div>
+          <div class="col-md-2" title="Modulation">
+            <input id="modulation" class="slider" type="text" data-slider-id="panSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
           </div>
         </div>
         <div class="row">
-          <div class="col-md-7">
-            <div id="divSetOutput" class="btn btn-default">
-              <span class="glyphicon glyphicon-log-out"></span><span id="setOutput" style="padding-left:8px;">MIDI Out Deviceを設定</span>
-            </div>
-            <div id="divSetInput" class="btn btn-default">
-              <span class="glyphicon glyphicon-log-in"></span><span id="setInput" style="padding-left:8px;">MIDI Input Deviceを設定</span>
-            </div>
-            <input id="resetAllController" class="btn btn-warning panicButton" type="button" value="Panic">
+          <div class="col-md-1" title="Reverb Effect Send Level">
+            <label><small>Reverb Send</small></label>
           </div>
-          <div class="btn-group col-md-2">
-            <button type="button" class="btn btn-default" id="zero" style="height:34px;"><span class="glyphicon glyphicon-fast-backward"></span></button>
-            <button type="button" class="btn btn-default" id="start" style="height:34px;"><span id="startButton" class="glyphicon glyphicon-play"></span></button>
-            <button type="button" class="btn btn-default" id="stop" style="height:34px;"><span class="glyphicon glyphicon-stop"></span></button>
+          <div class="col-md-2" title="Reverb Effect Send Level">
+            <input id="reverbSend" class="slider" type="text" data-slider-id="reverbSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
           </div>
-          <div class="col-md-3 input-group">
-            <span class="input-group-addon"><span class="glyphicon glyphicon-heart"></span> Tempo</span>
-            <input type="number" class="form-control" placeholder="Set Tempo" id="tempo" value="120">
-          </div>
-        </div><!-- row -->
-
-        <div class="row" style="clear:both;">&nbsp;</div>
-       <!--
-
-          <ul class="nav nav-tabs" style="width:800px;">
-            <li class="active"><a href="#pianorolltab" data-toggle="tab">Sequence</a></li>
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane active" id="pianorolltab">
-
-        -->
-            <!--
-          <div class="row">
-            <div class="col-md-8">
-              <div class="input-group">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mode <span class="caret"></span></button>
-                  <ul class="dropdown-menu">
-                    <li><a href="#" id="inputTextMode"><span class="glyphicon glyphicon-pencil"></span> InputText</a></li>
-                    <li><a href="#" id="autoDoremiMode"><span class="glyphicon glyphicon-music"></span> DoReMi</a></li>
-                  </ul>
-                </div>
-                
-                <span class="input-group-addon" id="modeName"><span class="glyphicon glyphicon-pencil"></span> InputText</span>
-                <input type="text" class="form-control" id="inputText" placeholder="Input Text" value="どれみふぁそらしど">
-                <span class="input-group-btn">
-                  <button class="btn btn-primary" type="button" id="inputTextButton">Send</button>
-                </span>
-              </div>
-            </div>
-    
-
-            <div class="col-md-4">
-              <div class="input-group" style="vertical-align: auto;"><span class="glyphicon glyphicon-bullhorn"></span>Set:<span id="setletter"> -- </span>
-              </div>
-            </div>
-          </div> 
-          -->
-
-          <div class="row" style="clear:both;">&nbsp;</div>
-
-          <div class="row" >
-            
-            <div class="col-md-1">
-              <div class="text-left" >
-              <i class="fa fa-volume-up" ></i><label style="padding:  0 5px 0 5px;"><small>Volume</small></label>
-              </div>
-            </div>
-            <div class="col-md-2" title="Volume">
-              <input id="volume" class="slider" type="text" data-slider-id="volumeSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="64" data-slider-tooltip="show" />
-            </div>
-            <div class="col-md-1">
-              <div class="text-left" >
-              <label style="padding:  0 5px 0 5px;"><small>Mod.</small></label>
-              </div>
-            </div>
-            <div class="col-md-2" title="Modulation">
-              <input id="modulation" class="slider" type="text" data-slider-id="panSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
+          <div class="col-md-1" title="Chorus Effect Send Level">
+            <div class="text-left">
+              <label><small>Chorus Send</small></label>
             </div>
           </div>
+          <div class="col-md-2" title="Chorus Effect Send Level">
+            <input id="chorusSend" class="slider" type="text" data-slider-id="chorusSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
+          </div>
+          <div class="col-md-1" title="Variation Effect Send Level">
+            <div class="text-left">
+              <label><small>Variation Send</small></label>
+            </div>
+          </div>
+          <div class="col-md-2" title="Variation Effect Send Level">
+            <input id="variationSend" class="slider" type="text" data-slider-id="variationSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
+          </div>
+        </div>
         <div class="row">
-            <div class="col-md-1" title="Reverb Effect Send Level">
-                <label><small>Reverb Send</small></label>
-            </div>
-            <div class="col-md-2" title="Reverb Effect Send Level">
-              <input id="reverbSend" class="slider" type="text" data-slider-id="reverbSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
-            </div>
-
-            <div class="col-md-1" title="Chorus Effect Send Level">
-              <div class="text-left" >
-                <label><small>Chorus Send</small></label>
-              </div>
-            </div>
-            <div class="col-md-2" title="Chorus Effect Send Level">
-              <input id="chorusSend" class="slider" type="text" data-slider-id="chorusSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
-            </div>
-
-            <div class="col-md-1" title="Variation Effect Send Level">
-              <div class="text-left" >
-                <label><small>Variation Send</small></label>
-              </div>
-            </div>
-            <div class="col-md-2" title="Variation Effect Send Level">
-              <input id="variationSend" class="slider" type="text" data-slider-id="variationSlider" data-slider-min="0" data-slider-max="127" data-slider-step="1" data-slider-value="0" data-slider-tooltip="show" />
-            </div>
-
+          <div class="col-md-12">
+            <div class="content" id="holder">ここにファイルをドロップしてください。</div>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="content" id="holder">ここにファイルをドロップしてください。</div>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" id="info">
           </div>
-          <div class="row">
-            <div class="col-md-12" id="info">
-            </div>
-          </div>
-              
-              <!--
-              <div style="margin-top:5px;"></div>
-              <div style="width:800px; margin-top:10px;">
-                <div style="float:right; margin-bottom:6px;" class="btn-group dropup">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="actionDelete">Delete</a></li>
-                  </ul>
-                </div>
-                
-              </div>
-              -->
-              <!--
-              <div class="pianorollcanvas">
-                <canvas id="pianoroll"></canvas>
-                <div id="memoryCanvas" style="display:none;"></div>
-              </div>
-              -->
-     <!--
-               </div>
-             </div>
-        -->
+        </div>
+
+                  <!--
+                        <div style="margin-top:5px;"></div>
+                        <div style="width:800px; margin-top:10px;">
+                          <div style="float:right; margin-bottom:6px;" class="btn-group dropup">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+                            <ul class="dropdown-menu" role="menu">
+                              <li><a href="#" id="actionDelete">Delete</a></li>
+                            </ul>
+                          </div>
+          
+                        </div>
+                        -->
+                  <!--
+                        <div class="pianorollcanvas">
+                          <canvas id="pianoroll"></canvas>
+                          <div id="memoryCanvas" style="display:none;"></div>
+                        </div>
+                        -->
+                  <!--
+                         </div>
+                       </div>
+                  -->
       </div>
-
       <!-- fileImport -->
       <div class="modal fade" id="fileImport" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -320,7 +300,6 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-      
       <!--ToU -->
       <div class="modal fade" id="showToU" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -331,7 +310,7 @@
             </div>
             <div class="modal-body">
               <textarea id="regContent" style="width:600px; height:260px;"></textarea>
-              
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
@@ -339,62 +318,58 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-    </div><!-- /.wrap -->    
-     <div id="footer">
-  
-        <div class="container">
-        <p class="text-muted">Author:S.F.</p>
-      </div>
-
-        <div class="container">
-<!--       <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
-<!-- response -->
-<!-- <ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4402137407996189"
-     data-ad-slot="4250526121"
-     data-ad-format="auto"></ins>
-          
-<script>
-//(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
--->
-        </div>
-    </div>
+    </div><!-- /.wrap -->
+    <!--<div id="footer">-->
+          <!--<div class="container">
+              <p class="text-muted">Author:S.F.</p>
+            </div>-->
+    <!--<div class="container">-->
+    <!--       <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
+    <!-- response -->
+          <!-- <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-4402137407996189"
+           data-ad-slot="4250526121"
+           data-ad-format="auto"></ins>
+      
+      <script>
+      //(adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+      -->
+          <!--</div>
+          </div>-->
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.0.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <!-- <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script> -->
     <script src="/scripts/bootstrap.min.js"></script>
     <script src="/scripts/bootstrap-slider.js"></script>
-     <script src="/scripts/modernizr.custom.08063.js" ></script>
+    <script src="/scripts/modernizr.custom.08063.js"></script>
     <script src="/scripts/jquery.knob.js"></script>
-    <script src="./scripts/nsx1.js" ></script>
-     <script src="./scripts/text2sysex.js"></script>
-     <script src="./scripts/WebMIDIAPI.js"></script>
-     <script src="./scripts/pianoroll.js"></script>
-     <script src="./scripts/SMFreader.js" ></script>
-     <script src="./scripts/sequencer.js" ></script>
-     <script src="./scripts/app.js" ></script>
-     <script type="text/javascript">
-/// <reference path="/scripts/jquery-2.1.0-vsdoc.js" />
-/// <reference path="./scripts/nsx1.js" />
-/// <reference path="/scripts/bootstrap-slider.js" />
-/// <reference path="/scripts/jquery.knob.js" />
-/// <reference path="./scripts/WebMIDIAPI.js" />
-/// <reference path="./scripts/text2sysex.js" />
-/// <reference path="./scripts/SMFreader.js" />
-/// <reference path="./scripts/sequencer.js" />
-
-    /*  var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-15457703-9']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();*/
-</script>
-   </body>
+    <script src="./scripts/nsx1.js"></script>
+    <script src="./scripts/text2sysex.js"></script>
+    <script src="./scripts/WebMIDIAPI.js"></script>
+    <script src="./scripts/pianoroll.js"></script>
+    <script src="./scripts/SMFreader.js"></script>
+    <script src="./scripts/sequencer.js"></script>
+    <script src="./scripts/app.js"></script>
+    <script type="text/javascript">
+      /// <reference path="/scripts/jquery-2.1.0-vsdoc.js" />
+      /// <reference path="./scripts/nsx1.js" />
+      /// <reference path="/scripts/bootstrap-slider.js" />
+      /// <reference path="/scripts/jquery.knob.js" />
+      /// <reference path="./scripts/WebMIDIAPI.js" />
+      /// <reference path="./scripts/text2sysex.js" />
+      /// <reference path="./scripts/SMFreader.js" />
+      /// <reference path="./scripts/sequencer.js" />
+          /*  var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-15457703-9']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();*/
+    </script>
+  </body>
 </html>
