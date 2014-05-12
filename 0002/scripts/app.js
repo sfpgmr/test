@@ -1,11 +1,12 @@
 /// <reference path="/scripts/jquery-2.1.0-vsdoc.js" />
-/// <reference path="./scripts/nsx1.js" />
+/// <reference path="./nsx1.js" />
 /// <reference path="/scripts/bootstrap-slider.js" />
 /// <reference path="/scripts/jquery.knob.js" />
-/// <reference path="./scripts/WebMIDIAPI.js" />
-/// <reference path="./scripts/text2sysex.js" />
-/// <reference path="./scripts/SMFreader.js" />
-/// <reference path="./scripts/sequencer.js" />
+/// <reference path="./text2sysex.js" />
+/// <reference path="./SMFreader.js" />
+/// <reference path="./sequencer.js" />
+/// <reference path="./recorder.js" />
+/// <reference path="./recorderWorker.js" />
 
 // midi out select modal
 
@@ -86,25 +87,25 @@
 /*
 var singMode="inputtext"; // autodoremi
 document.getElementById("inputTextMode").addEventListener("click", function(event){
-    singMode="inputtext";
-    document.getElementById("inputText").removeAttribute("disabled");
-    document.getElementById("inputTextButton").removeAttribute("disabled");
-    document.getElementById("modeName").innerHTML="<span class=\"glyphicon glyphicon-pencil\"></span> InputText</span>";
+singMode="inputtext";
+document.getElementById("inputText").removeAttribute("disabled");
+document.getElementById("inputTextButton").removeAttribute("disabled");
+document.getElementById("modeName").innerHTML="<span class=\"glyphicon glyphicon-pencil\"></span> InputText</span>";
 
-    // automatically send text
-    var type="click";
-    var e=document.createEvent('MouseEvent');
-    var b=document.getElementById("inputTextButton");
-    e.initEvent(type, true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-    b.dispatchEvent(e);    
+// automatically send text
+var type="click";
+var e=document.createEvent('MouseEvent');
+var b=document.getElementById("inputTextButton");
+e.initEvent(type, true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+b.dispatchEvent(e);    
 });
 
 document.getElementById("autoDoremiMode").addEventListener("click", function(event){
-    singMode="autodoremi";
-    document.getElementById("inputText").setAttribute("disabled", "disabled");
-    document.getElementById("inputTextButton").setAttribute("disabled", "disabled");
-    document.getElementById("setletter").innerHTML=" --";
-    document.getElementById("modeName").innerHTML="<span class=\"glyphicon glyphicon-music\"></span> DoReMi</span>";
+singMode="autodoremi";
+document.getElementById("inputText").setAttribute("disabled", "disabled");
+document.getElementById("inputTextButton").setAttribute("disabled", "disabled");
+document.getElementById("setletter").innerHTML=" --";
+document.getElementById("modeName").innerHTML="<span class=\"glyphicon glyphicon-music\"></span> DoReMi</span>";
 });
 
 */
@@ -222,19 +223,19 @@ document.getElementById("autoDoremiMode").addEventListener("click", function(eve
 // NSX-1
 /*
 document.getElementById("inputTextButton").addEventListener("click", function(){
-    // check whether midi out is set or not
-    if(typeof mOut!="object") {
-        showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
-        return;
-    }
+// check whether midi out is set or not
+if(typeof mOut!="object") {
+showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
+return;
+}
 
-    var text=document.getElementById("inputText").value;
-    var sysEx=nsx1.getSysExByText(text);
-    var now=window.performance.now();
-    for(var i=0; i<sysEx.length; i++) {
-        mOut.send(sysEx[i], now+i*10);
-    }
-    document.getElementById("setletter").innerHTML=text;
+var text=document.getElementById("inputText").value;
+var sysEx=nsx1.getSysExByText(text);
+var now=window.performance.now();
+for(var i=0; i<sysEx.length; i++) {
+mOut.send(sysEx[i], now+i*10);
+}
+document.getElementById("setletter").innerHTML=text;
 });*/
 
 //function selectMidiOut(selIdx) {
@@ -250,7 +251,7 @@ document.getElementById("inputTextButton").addEventListener("click", function(){
 function panic()
 {
   var outputs = sequencer.midiAccess.outputs();
-  for(var j = 0,end = outputs.length;j < end;++j)
+  for (var j = 0, end = outputs.length; j < end; ++j)
   {
     var out = outputs[j];
     for (var i = 0; i < 16; ++i)
@@ -264,7 +265,7 @@ function panic()
       var msg = [0xB0 | i, 0x78, 0x00];
       out.send(msg);
     }
-    
+
   }
 }
 
@@ -294,154 +295,154 @@ pRoll.render();
 pRoll.movePos({x:0, y:-600});
 
 pRoll.noteOnFunc=function(message, time) {
-    var event={ };
-    event.data=message;
-    switch(singMode) {
-      case "inputtext":
-        mOut.send(event.data);
-        break;
-      case "autodoremi":
-        if(event.data[0]==0x80 || event.data[0]==0x90) {
-            var w=nsx1.getSysExByNoteNo(event.data[1]);
-            var now=window.performance.now();
-            mOut.send(w[0], now+3);
-            switch(w[1]) {
-              case 'n':
-                mOut.send(event.data);
-                break;
-              case 's':
-                var now=window.performance.now();
-                mOut.send(event.data, now);
-                mOut.send([event.data[0], event.data[1], 0x00], now+100); //note off
-                mOut.send(event.data, now+100);
-                mOut.send([event.data[0], event.data[1], 0x00], now+300); //note off
-                mOut.send(event.data, now+300);
-                break;
-            }
-        } else {
-            mOut.send(event.data);
-        }
-        break;
-    }
+var event={ };
+event.data=message;
+switch(singMode) {
+case "inputtext":
+mOut.send(event.data);
+break;
+case "autodoremi":
+if(event.data[0]==0x80 || event.data[0]==0x90) {
+var w=nsx1.getSysExByNoteNo(event.data[1]);
+var now=window.performance.now();
+mOut.send(w[0], now+3);
+switch(w[1]) {
+case 'n':
+mOut.send(event.data);
+break;
+case 's':
+var now=window.performance.now();
+mOut.send(event.data, now);
+mOut.send([event.data[0], event.data[1], 0x00], now+100); //note off
+mOut.send(event.data, now+100);
+mOut.send([event.data[0], event.data[1], 0x00], now+300); //note off
+mOut.send(event.data, now+300);
+break;
+}
+} else {
+mOut.send(event.data);
+}
+break;
+}
 
-    //mOut.send(message, time);
+//mOut.send(message, time);
 };
 pRoll.noteOffFunc=function(message, time) {
-    mOut.send(message, time);
+mOut.send(message, time);
 };
 
 pRoll.exportNoteStackFunc=function() {
-    var inputtext=document.getElementById("inputText").value;
-    var content=JSON.stringify({ inputText:inputtext, noteStack: this.noteStack});
-    var blob = new Blob([ content ], { "type" : "text/plain" });
+var inputtext=document.getElementById("inputText").value;
+var content=JSON.stringify({ inputText:inputtext, noteStack: this.noteStack});
+var blob = new Blob([ content ], { "type" : "text/plain" });
 
-    var objectURL = (window.URL || window.webkitURL).createObjectURL(blob);
-    var e = document.createEvent('MouseEvent');
-    var a = document.createElement('a');
+var objectURL = (window.URL || window.webkitURL).createObjectURL(blob);
+var e = document.createEvent('MouseEvent');
+var a = document.createElement('a');
     
-    //create element of "a" and set file name in download attribute
-    a.download = "test.txt";
-    a.href = objectURL;
+//create element of "a" and set file name in download attribute
+a.download = "test.txt";
+a.href = objectURL;
     
-    //fire click event
-    e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-    a.dispatchEvent(e);
+//fire click event
+e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+a.dispatchEvent(e);
 };
 
 pRoll.importNoteStackFunc=function(event) {
-    var files=event.target.files;
-    var out=null;
+var files=event.target.files;
+var out=null;
     
-    var that=pRoll;
-    var reader=new FileReader();
-    reader.onload=function() {
-        out=reader.result;
+var that=pRoll;
+var reader=new FileReader();
+reader.onload=function() {
+out=reader.result;
 
-        //var content=JSON.stringify({ inputText:inputtext, noteStack: this.noteStack});
-        var contents=JSON.parse(out);
-        that.noteStack=contents.noteStack;
+//var content=JSON.stringify({ inputText:inputtext, noteStack: this.noteStack});
+var contents=JSON.parse(out);
+that.noteStack=contents.noteStack;
 
         
-        document.getElementById("inputText").value=contents.inputText;
-        var e = document.createEvent('MouseEvent');
-        var b=document.getElementById("inputTextButton");
+document.getElementById("inputText").value=contents.inputText;
+var e = document.createEvent('MouseEvent');
+var b=document.getElementById("inputTextButton");
 
-        //fire click event
-        e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-        b.dispatchEvent(e);
+//fire click event
+e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+b.dispatchEvent(e);
         
-    };
-    reader.readAsText(files[0], "utf-8");
+};
+reader.readAsText(files[0], "utf-8");
 };
 
 
 document.getElementById("actionDelete").addEventListener("click", function(event){
-    pRoll.deleteNote();
+pRoll.deleteNote();
 }, false);
 
 document.getElementById("start").addEventListener("click", function(event){
-    // check whether midi out is set or not
-    if(typeof mOut!="object") {
-        showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
-        return;
-    }
+// check whether midi out is set or not
+if(typeof mOut!="object") {
+showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
+return;
+}
     
-    var tempo=document.getElementById("tempo").value;
-    pRoll.moveCurrent(tempo);
+var tempo=document.getElementById("tempo").value;
+pRoll.moveCurrent(tempo);
 
-    // control button
-    document.getElementById("start").setAttribute("disabled", "disabled");
+// control button
+document.getElementById("start").setAttribute("disabled", "disabled");
 }, false);
 
 document.getElementById("stop").addEventListener("click", function(event){
-    // check whether midi out is set or not
-    if(typeof mOut!="object") {
-        showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
-        return;
-    }
+// check whether midi out is set or not
+if(typeof mOut!="object") {
+showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
+return;
+}
     
-    var tempo=document.getElementById("tempo").value;
-    pRoll.stopCurrent();
-    // control button
-    document.getElementById("start").removeAttribute("disabled");
+var tempo=document.getElementById("tempo").value;
+pRoll.stopCurrent();
+// control button
+document.getElementById("start").removeAttribute("disabled");
 }, false);
 
 document.getElementById("zero").addEventListener("click", function(event){
-    // check whether midi out is set or not
-    if(typeof mOut!="object") {
-        showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
-        return;
-    }
+// check whether midi out is set or not
+if(typeof mOut!="object") {
+showMidiInOutSelM("divMidiOutSelWarning", "OUT", "resetAllController");
+return;
+}
     
-    pRoll.backPointerToZero();
+pRoll.backPointerToZero();
 }, false);
 
 document.getElementById("fileExport").addEventListener("click", function(event){
-    pRoll.exportNoteStackFunc();
+pRoll.exportNoteStackFunc();
 }, false);
 
 document.getElementById("fileImport").addEventListener("change", pRoll.importNoteStackFunc, false);
 */
 
-function sendCC(out,val1,val2,ch)
+function sendCC(out, val1, val2, ch)
 {
   if (!ch) ch = 0;
-  if(out)
+  if (out)
   {
-    var msg = [0xb0 | ch,val1,val2];
+    var msg = [0xb0 | ch, val1, val2];
     out.send(msg);
   }
 }
 
 function initEffects(out)
 {
-  if(out)
+  if (out)
   {
-    sendCC(out,7,64); // Volume
-    sendCC(out,1,0); // Mod
-    sendCC(out,0x5b, 0); // reverb
-    sendCC(out,0x5d, 0); // chorus
-    sendCC(out,0x5e, 0); // variation
+    sendCC(out, 7, 64); // Volume
+    sendCC(out, 1, 0); // Mod
+    sendCC(out, 0x5b, 0); // reverb
+    sendCC(out, 0x5d, 0); // chorus
+    sendCC(out, 0x5e, 0); // variation
   }
 }
 
@@ -451,7 +452,7 @@ function parseSMF(file)
 {
   song = new Song(file.name);
   song.stepsPerBeat = file.ticksPerBeat;
-  for(var i = 0;i < file.numTracks;++i)
+  for (var i = 0; i < file.numTracks; ++i)
   {
     var track = midiFile.tracks[i];
     var stepMax = 0;
@@ -461,16 +462,16 @@ function parseSMF(file)
     var events = track.events;
     var noteBuffer = [];
     var step_bkp = 0;
-    for(var j = 0,l = events.length;j < l;++j)
+    for (var j = 0, l = events.length; j < l; ++j)
     {
       var ev = events[j];
       var step = ev.delta;
       stepMax += ev.delta;
-      if(step)
+      if (step)
       {
-        for(var k = 0;k < noteBuffer.length;++k)
+        for (var k = 0; k < noteBuffer.length; ++k)
         {
-          if(noteBuffer[k])
+          if (noteBuffer[k])
           {
             noteBuffer[k].event.gate += step;
           }
@@ -478,7 +479,7 @@ function parseSMF(file)
       }
       step += step_bkp;
       step_bkp = 0;
-      switch(ev.type)
+      switch (ev.type)
       {
         case "MIDI":
           if (songTrack.channel == null)
@@ -591,8 +592,8 @@ function parseSMF(file)
               }
               break;
             case 0x2f: // End Of Track
-              songTrack.events.push(new MidiEvent(step,0,new EndOfTrack(i)));
-              if(stepMax > song.stepMax)
+              songTrack.events.push(new MidiEvent(step, 0, new EndOfTrack(i)));
+              if (stepMax > song.stepMax)
               {
                 song.stepMax = stepMax;
               }
@@ -609,7 +610,7 @@ function parseSMF(file)
               break;
           }
           break;
-      } 
+      }
     }
   }
 }
@@ -617,11 +618,11 @@ function parseSMF(file)
 function dumpInfo(target)
 {
   var str = "";
-  for (var i = 0; i < song.tracks.length;++i )
+  for (var i = 0; i < song.tracks.length; ++i)
   {
     str += "【Track " + i + " " + song.tracks[i].name + "】<br/>";
     var events = song.tracks[i].events;
-    for(var j = 0;j < events.length;++j)
+    for (var j = 0; j < events.length; ++j)
     {
       var s = events[j].toFormatStr();
       str += s + "<br/>";
@@ -633,15 +634,15 @@ function dumpInfo(target)
 function displayInfo(song)
 {
   $('#info').html('');
-  var select = $('<select>', { 'type': 'text', 'style': 'padding: 0;'})
+  var select = $('<select>', { 'type': 'text', 'style': 'padding: 0;' })
   var outputs = sequencer.midiAccess.outputs();
-  for(var j = 0,len = outputs.length;j < len;++j)
+  for (var j = 0, len = outputs.length; j < len; ++j)
   {
     var output = outputs[j];
-    $('<option>',{'style':'border:1px;padding 1px;'}).val(j).text(output.name).appendTo(select);
+    $('<option>', { 'style': 'border:1px;padding 1px;' }).val(j).text(output.name).appendTo(select);
   };
 
-  var table = $('<table>', { 'id': 'songinfo','class':'table table-striped table-condensed' })
+  var table = $('<table>', { 'id': 'songinfo', 'class': 'table table-striped table-condensed' })
   .append($('<thead>').append($('<tr>').html('<th>Trk</th><th>Name</th><th id="allSelectPort"></th><th>Ch.</th><th>Volume</th><th>Panpot</th><th>Reverb</th><th>Chorus</th><th>Variation</th>')))
   .appendTo('#info');
   var tbody = $('<tbody>').appendTo('#songinfo');
@@ -656,13 +657,13 @@ function displayInfo(song)
       }
     }).appendTo('#allSelectPort');
 
-  for(var i = 0;i < song.tracks.length;++i)
+  for (var i = 0; i < song.tracks.length; ++i)
   {
-    var row = $('<tr>',{'id':'track' + i});
+    var row = $('<tr>', { 'id': 'track' + i });
     var track = song.tracks[i];
 
     var s = select.clone();
-    s.attr('id','output' + ('00' + i.toString()).slice(-2) )
+    s.attr('id', 'output' + ('00' + i.toString()).slice(-2))
     .attr('trackNo', i.toString())
     .on('change', function (e)
     {
@@ -688,10 +689,10 @@ function displayInfo(song)
       }).on('slide', (function ()
       {
         var info = sequencer.trackInfos[i];
-        return function(e)
+        return function (e)
         {
           console.log(info.output.name + ' ' + e.value);
-          sendCC(info.output,7,e.value,info.channel);
+          sendCC(info.output, 7, e.value, info.channel);
         };
       })())
       )
@@ -709,10 +710,10 @@ function displayInfo(song)
       }).on('slide', (function ()
       {
         var info = sequencer.trackInfos[i];
-        return function(e)
+        return function (e)
         {
           console.log(info.output.name + ' ' + e.value);
-          sendCC(info.output,0xa,e.value,info.channel);
+          sendCC(info.output, 0xa, e.value, info.channel);
         };
       })())
       )
@@ -730,10 +731,10 @@ function displayInfo(song)
       }).on('slide', (function ()
       {
         var info = sequencer.trackInfos[i];
-        return function(e)
+        return function (e)
         {
           console.log(info.output.name + ' ' + e.value);
-          sendCC(info.output,0x5b,e.value,info.channel);
+          sendCC(info.output, 0x5b, e.value, info.channel);
         };
       })())
       )
@@ -751,10 +752,10 @@ function displayInfo(song)
       }).on('slide', (function ()
       {
         var info = sequencer.trackInfos[i];
-        return function(e)
+        return function (e)
         {
           console.log(info.output.name + ' ' + e.value);
-          sendCC(info.output,0x5d,e.value,info.channel);
+          sendCC(info.output, 0x5d, e.value, info.channel);
         };
       })())
       )
@@ -772,18 +773,18 @@ function displayInfo(song)
       }).on('slide', (function ()
       {
         var info = sequencer.trackInfos[i];
-        return function(e)
+        return function (e)
         {
           console.log(info.output.name + ' ' + e.value);
-          sendCC(info.output,0x5d,e.value,info.channel);
+          sendCC(info.output, 0x5d, e.value, info.channel);
         };
       })())
       )
      )
      ;
 
-     ;
-//     .append($('<td>').append($('<canvas>',{'id':'trackData' + i,'height':'12px','width':'300px'})));
+    ;
+    //     .append($('<td>').append($('<canvas>',{'id':'trackData' + i,'height':'12px','width':'300px'})));
     tbody.append(row);
     $(sequencer.trackInfos[i]).on('volume', (function ()
     {
@@ -831,8 +832,8 @@ function displayInfo(song)
     })());
 
 
- //   $('#volume' + i)
-;
+    //   $('#volume' + i)
+    ;
 
   }
 
@@ -849,6 +850,93 @@ function displayInfo(song)
     ;
   });
 
+}
+
+/////////////////////////////////////////////////
+/// wav ファイル録音
+/////////////////////////////////////////////////
+
+navigator.getUserMedia = navigator.getUserMedia ||
+navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+function AudioInputMedia()
+{
+  var self = this;
+  this.audioSourceInfos = [];
+
+  //function gotSources(sourceInfos)
+  //{
+  //  for (var i = 0; i != sourceInfos.length; ++i)
+  //  {
+  //    var sourceInfo = sourceInfos[i];
+  //    var option = document.createElement("option");
+  //    option.value = sourceInfo.id;
+  //    if (sourceInfo.kind === 'audio')
+  //    {
+  //      option.text = sourceInfo.label || 'microphone ' + (audioSelect.length + 1);
+  //      audioSelect.appendChild(option);
+  //    } else if (sourceInfo.kind === 'video')
+  //    {
+  //      option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
+  //      videoSelect.appendChild(option);
+  //    } else
+  //    {
+  //      console.log('Some other kind of source: ', sourceInfo);
+  //    }
+  //  }
+  //}
+
+  if (typeof MediaStreamTrack === 'undefined')
+  {
+    showError('お使いのブラウザではMediaStreamTrackをサポートしていないため、このプログラムを実行できません。');
+  } else
+  {
+    MediaStreamTrack.getSources(function (sourceInfos)
+    {
+      //      self.souceInfos = sourceInfos;
+      for (var i = 0; i != sourceInfos.length; ++i)
+      {
+        var sourceInfo = sourceInfos[i];
+        if (sourceInfo.kind === 'audio')
+        {
+          self.souceInfos.push(sourceInfo);
+        }
+      }
+    });
+  }
+}
+
+
+
+/////////////////////////////////////////////////
+/// メイン 
+/////////////////////////////////////////////////
+
+function showError(error, recovery)
+{
+  $('#info').text('');
+  $('#info')
+  .removeClass('alert-info')
+  .addClass('alert alert-danger alert-dismissable')
+  .append($('<span>')
+  .text('エラー：' + error)
+  )
+  ;
+  if(recovery)
+  {
+    $('#info')
+    .append($('<button>', { 'class': 'close', 'data-dismiss': 'alert', 'aria-hidden': 'true' })
+      .on('click', function (e)
+      {
+        $('#info').removeClass('alert-danger alert-dismissable')
+        .addClass('alert-info')
+        .text(recovery);
+
+      }
+      )
+      .html('&times;')
+    );
+  }
 }
 
 var sequencer = null;
@@ -884,7 +972,7 @@ $().ready(function ()
     {
       $('#start').removeAttr('disabled');
       $('#stop').attr('disabled', 'disabled');
-      $('#songProgress').css('width','0%').text('');
+      $('#songProgress').css('width', '0%').text('');
     });
 
     $(sequencer).on('init', function ()
@@ -925,29 +1013,12 @@ $().ready(function ()
           } else
           {
             $('#info').text('');
-            $('#info')
-            .addClass('alert alert-danger alert-dismissable')
-            .append($('<button>', { 'class': 'close', 'data-dismiss': 'alert', 'aria-hidden': 'true' })
-              .on('click', function (e)
-              {
-                $('#info').removeClass('alert-danger alert-dismissable')
-                .addClass('alert-info')
-                .text('ここにSMFファイルをドラッグ・ドロップしてください。');
-
-              }
-              )
-              .html('&times;')
-            )
-            .append($('<span>')
-            .text('エラー：' + result.error)
-            )
-            ;
+            showError(result.error,'ここにSMFファイルをドラッグ・ドロップしてください。');
           }
         };
         reader.onerror = function (event)
         {
-          $('#info').removeClass('alert alert-info');
-          alert("Error: " + reader.error);
+          showError(reader.error,'ここにSMFファイルをドラッグ・ドロップしてください。');
         };
         reader.readAsArrayBuffer(file);
         return false;

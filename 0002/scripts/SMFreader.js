@@ -1,7 +1,7 @@
 var midiFile = {};
 
 function error(str) {
-	alert("Error: " + str);
+	//alert("Error: " + str);
 	return { result: false, error: str };
 }
 
