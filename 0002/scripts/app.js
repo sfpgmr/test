@@ -461,6 +461,7 @@ function parseSMF(file)
     song.tracks.push(songTrack);
     var events = track.events;
     var noteBuffer = [];
+    var eventsStep = {};
     var step_bkp = 0;
     for (var j = 0, l = events.length; j < l; ++j)
     {
@@ -515,9 +516,15 @@ function parseSMF(file)
                 step_bkp = step;
                 } else
                 {*/
-                var noteEvent = new MidiEvent(step, ev.midiChannel, new Note(ev.parameter1, 0, ev.parameter2));
-                songTrack.events.push(noteEvent);
+                if (!songTrack.events.note)
+                {
+                  songTrack.events.note = [];
+                  eventsStep.note = 0;
+                }
+                var noteEvent = new MidiEvent(stepMax - eventsStep.note, ev.midiChannel, new Note(ev.parameter1, 0, ev.parameter2));
+                songTrack.events.note.push(noteEvent);
                 noteBuffer.push(noteEvent);
+                eventsStep.note = stepMax;
                 //                }
               } else
               {
@@ -534,45 +541,109 @@ function parseSMF(file)
               }
               break;
             case 0xa: // Polyphonic Key Pressure
-              songTrack.events.push(new MidiEvent(step, ev.midiChannel, new PolyphonicKeyPressure(ev.parameter1, ev.parameter2)));
+              if (!songTrack.events.polyPhonicKeyPressure)
+              {
+                eventsStep.polyPhonicKeyPressure = 0;
+                songTrack.events.polyPhonicKeyPressure = [];
+              }
+              songTrack.events.polyPhonicKeyPressure.push(new MidiEvent(stepMax - eventsStep.polyPhonicKeyPressure, ev.midiChannel, new PolyphonicKeyPressure(ev.parameter1, ev.parameter2)));
+              eventsStep.polyPhonicKeyPressure = stepMax;
               break;
             case 0xb: // Control Change
               switch (ev.parameter1)
               {
                 case 0x07:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new MainVolume(ev.parameter2)));
+                  if (!songTrack.events.mainVolume)
+                  {
+                    songTrack.events.mainVolume = [];
+                    eventsStep.mainVolume = 0;
+                  }
+                  songTrack.events.mainVolume.push(new MidiEvent(stepMax - eventsStep.mainVolume, ev.midiChannel, new MainVolume(ev.parameter2)));
+                  eventsStep.mainVolume = stepMax;
                   break;
                 case 0x0a:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new Panpot(ev.parameter2)));
+                  if (!songTrack.events.panpot)
+                  {
+                    songTrack.events.panpot = [];
+                    eventsStep.panpot = 0;
+                  }
+                  songTrack.events.panpot.push(new MidiEvent(stepMax - eventsStep.panpot, ev.midiChannel, new Panpot(ev.parameter2)));
                   break;
                 case 0x5b:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new Reverb(ev.parameter2)));
+                  if (!songTrack.events.reverb)
+                  {
+                    songTrack.events.reverb = [];
+                    eventsStep.reverb = 0;
+                  }
+                  songTrack.events.reverb.push(new MidiEvent(stepMax - eventsStep.reverb, ev.midiChannel, new Reverb(ev.parameter2)));
+                  eventsStep.reverb = stepMax;
                   break;
                 case 0x5d:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new Chorus(ev.parameter2)));
+                  if (!songTrack.events.chorus)
+                  {
+                    songTrack.events.chorus = [];
+                    eventsStep.chorus = 0;
+                  }
+                  songTrack.events.chorus.push(new MidiEvent(stepMax - eventsStep.chorus, ev.midiChannel, new Chorus(ev.parameter2)));
+                  eventsStep.chorus = stepMax;
                   break;
                 case 0x5e:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new Variation(ev.parameter2)));
+                  if (!songTrack.events.variation)
+                  {
+                    songTrack.events.variation = [];
+                    eventsStep.variation = stepMax;
+                  }
+                  songTrack.events.variation.push(new MidiEvent(stepMax - eventsStep.variation, ev.midiChannel, new Variation(ev.parameter2)));
+                  eventsStep.variation = stepMax;
                   break;
                 default:
-                  songTrack.events.push(new MidiEvent(step, ev.midiChannel, new ControlChange(ev.parameter1, ev.parameter2)));
+                  if (!songTrack.events.controlChange)
+                  {
+                    songTrack.events.controlChange = [];
+                    eventsStep.controlChange = 0;
+                  }
+                  songTrack.events.controlChange.push(new MidiEvent(stepMax - eventsStep.controlChange, ev.midiChannel, new ControlChange(ev.parameter1, ev.parameter2)));
+                  eventsStep.controlChange = stepMax;
                   break;
               }
               break;
             case 0xc: // Program Change
-              songTrack.events.push(new MidiEvent(step, ev.midiChannel, new ProgramChange(ev.parameter1)));
+              if (!songTrack.events.programChange)
+              {
+                songTrack.events.programChange = [];
+                eventsStep.programChange = 0;
+              }
+              songTrack.events.programChange.push(new MidiEvent(stepMax - eventsStep.programChange, ev.midiChannel, new ProgramChange(ev.parameter1)));
+              eventsStep.programChange = stepMax;
               break;
             case 0xd: // Channel Pressure
-              songTrack.events.push(new MidiEvent(step, ev.midiChannel, new ChannelPressure(ev.parameter1)));
+              if (!songTrack.events.channelPressure)
+              {
+                songTrack.events.channelPressure = [];
+                eventsStep.channelPressure = 0;
+              }
+              songTrack.events.channelPressure.push(new MidiEvent(stepMax - eventsStep.channelPressure, ev.midiChannel, new ChannelPressure(ev.parameter1)));
+              eventsStep.channelPressure = stepMax;
               break;
             case 0xe: // Pitch Bend
-
-              songTrack.events.push(new MidiEvent(step, ev.midiChannel, new PitchBend(ev.parameter1 | ev.parameter2 << 7)));
+              if (!songTrack.events.pitchBend)
+              {
+                songTrack.events.pitchBend = [];
+                eventsStep.pitchBend = 0;
+              }
+              songTrack.events.pitchBend.push(new MidiEvent(stepMax - eventsStep.pitchBend, ev.midiChannel, new PitchBend(ev.parameter1 | ev.parameter2 << 7)));
+              eventsStep.pitchBend = stepMax;
               break;
           }
           break;
         case "sysex":
-          songTrack.events.push(new MidiEvent(step, 0, new SysEx(ev.metaData)));
+          if (!songTrack.events.sysex)
+          {
+            songTrack.events.sysex = [];
+            eventsStep.sysex = 0;
+          }
+          songTrack.events.sysex.push(new MidiEvent(stepMax - eventsStep.sysex, 0, new SysEx(ev.metaData)));
+          eventsStep.sysex = stepMax;
           break;
         case "meta":
           switch (ev.metaType)
@@ -592,7 +663,13 @@ function parseSMF(file)
               }
               break;
             case 0x2f: // End Of Track
-              songTrack.events.push(new MidiEvent(step, 0, new EndOfTrack(i)));
+              if (!songTrack.events.endOfTrack)
+              {
+                songTrack.events.endOfTrack = [];
+                eventsStep.endOfTrack = 0;
+              }
+              songTrack.events.endOfTrack.push(new MidiEvent(stepMax - eventsStep.endOfTrack, 0, new EndOfTrack(i)));
+              eventsStep.endOfTrack = stepMax;
               if (stepMax > song.stepMax)
               {
                 song.stepMax = stepMax;
@@ -600,13 +677,25 @@ function parseSMF(file)
               break;
             case 0x51: // Set Tempo
               {
-                var setTempo = new MidiEvent(step, 0, new SetTempo());
+                if (!songTrack.events.tempo)
+                {
+                  songTrack.events.tempo = [];
+                  eventsStep.tempo = 0;
+                }
+                var setTempo = new MidiEvent(stepMax - eventsStep.tempo, 0, new SetTempo());
+                eventsStep.tempo = stepMax;
                 setTempo.event.setQuarterNoteMicroSec((ev.metaData[0] << 16) + (ev.metaData[1] << 8) + (ev.metaData[2]));
-                songTrack.events.push(setTempo);
+                songTrack.events.tempo.push(setTempo);
               }
               break;
             default:
-              songTrack.events.push(new MidiEvent(step, 0, new MetaEvent(ev.metaType, ev.metaData)));
+              if (!songTrack.events.metaEvent)
+              {
+                songTrack.events.metaEvent = [];
+                eventsStep.metaEvent = 0;
+              }
+              songTrack.events.metaEvent.push(new MidiEvent(stepMax - eventsStep.metaEvent, 0, new MetaEvent(ev.metaType, ev.metaData)));
+              eventsStep.metaEvent = stepMax;
               break;
           }
           break;

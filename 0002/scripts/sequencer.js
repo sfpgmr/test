@@ -3,7 +3,15 @@
 * Author:S.F.
 * Copyright (c) 2014 Satoshi Fujiwara. All rights reserved.
 */
-
+/// <reference path="/scripts/jquery-2.1.0-vsdoc.js" />
+/// <reference path="./nsx1.js" />
+/// <reference path="/scripts/bootstrap-slider.js" />
+/// <reference path="/scripts/jquery.knob.js" />
+/// <reference path="./text2sysex.js" />
+/// <reference path="./SMFreader.js" />
+/// <reference path="./app.js" />
+/// <reference path="./recorder.js" />
+/// <reference path="./recorderWorker.js" />
 
 function MidiEvent(step,channel,event)
 {
@@ -632,7 +640,50 @@ function Track(name,comment)
   this.name = name;
   this.comment = comment?comment:"";
   this.channel = null;
-  this.events = [];
+  this.events = {};
+  //{
+  //  all : [],
+  //  note : [],
+  //  effect : {}
+  //  {
+  //    // Control Change
+  //    modulation : [],
+  //    portamentTime : [],
+  //    dataEntry : [],
+  //    mainVolume : [],
+  //    panpot : [],
+  //    expression : [],
+  //    bankSelect : [],
+  //    sustain : [],
+  //    portament : [],
+  //    sostenuto : [],
+  //    softPedal : [],
+  //    harmonicContent : [],
+  //    releaseTime : [],
+  //    attackTime : [],
+  //    brightNess: [],
+  //    decayTime: [],
+  //    vibratoRate: [],
+  //    vibratoDelay: [],
+  //    generalPurposeController1: [],
+  //    generalPurposeController2: [],
+  //    portamentControl:[],
+  //    reverbSendLevel:[],
+  //    chorusSendLevel:[],
+  //    variationSendLevel:[],
+  //    allSoundOff:[],
+  //    resetAllControllers:[],
+  //    allNoteOff:[],
+  //    omniOff:[],
+  //    omniOn:[],
+  //    mono:[],
+  //    poly:[],
+  //    channelPressure : [],
+  //    pitchBend : [],
+  //    polyphonicKeyPressure : [],
+  //    programChange : []
+  //  }
+  //};
 }
 
 function Song(name)
@@ -646,8 +697,7 @@ function Song(name)
 
 function TrackInfo()
 {
-  this.step = 0;
-  this.index = 0;
+  this.index = {};
   this.channel = 0;
   this.endOfTrack = null;
   this.output = null;
@@ -774,6 +824,7 @@ Sequencer.prototype.initTracks = function ()
 {
   this.endOfTrackCount = 0;
   this.initTempoMap(120.0);
+  var song = this.song;
   if (!this.trackInfos)
   {
     this.trackInfos = [];
@@ -781,7 +832,11 @@ Sequencer.prototype.initTracks = function ()
     {
       var trackInfo = new TrackInfo();
       trackInfo.output = this.midiAccess.outputs()[0];
-      trackInfo.channel = this.song.tracks[i].channel==null?0:this.song.tracks[i].channel;
+      trackInfo.channel = song.tracks[i].channel == null ? 0 : song.tracks[i].channel;
+      for (var ev in song.tracks[i].events)
+      {
+        trackInfo.index[ev] = {index:0,step:0};
+      }
       this.trackInfos.push(trackInfo);
     }
   } else
@@ -790,8 +845,13 @@ Sequencer.prototype.initTracks = function ()
     {
       var trackInfo = this.trackInfos[i];
       trackInfo.step = 0;
-      trackInfo.index = 0;
+      //trackInfo.index = {};
       trackInfo.endOfTrack = null;
+      for (var ev in song.tracks[i].events)
+      {
+        trackInfo.index[ev].step = 0;
+        trackInfo.index[ev].index = 0;
+      }
     }
 
   }
@@ -838,30 +898,35 @@ Sequencer.prototype.play = function ()
 {
   var tracks = this.song.tracks;
   var maxStep = this.tempo.step + (performance.now() - this.startTime - this.tempo.time + 200.0) / this.tempo.milliSecPerStep;
-  $(sequencer).trigger('songPlaying', [Math.floor(((this.tempo.step + (performance.now() - this.startTime - this.tempo.time) / this.tempo.milliSecPerStep) / this.song.stepMax)*100.0),performance.now() - this.startTime]);
+  $(sequencer).trigger('songPlaying', [Math.floor(((this.tempo.step + (performance.now() - this.startTime - this.tempo.time) / this.tempo.milliSecPerStep) / this.song.stepMax) * 100.0), performance.now() - this.startTime]);
   for (var i = 0, len = tracks.length; i < len; ++i)
   {
     var track = tracks[i];
     var trackInfo = this.trackInfos[i];
-    var index = trackInfo.index;
-
-    while (!trackInfo.endOfTrack && index < track.events.length)
+    for (var j in trackInfo.index)
     {
-      var event = track.events[index];
-      var step = event.step;
-      //    trackInfo.step += step;
-      if ((trackInfo.step + step) < maxStep)
+      var index = trackInfo.index[j].index;
+      var trackInfoStep = trackInfo.index[j].step;
+      var events = track.events[j];
+      while (!trackInfo.endOfTrack && index < events.length)
       {
-        trackInfo.step += step;
-        var time = this.getTime(trackInfo.step);
-        event.play(this, trackInfo, time, trackInfo.step, trackInfo.output);
-        ++index;
-      } else
-      {
-        break;
+        var event = events[index];
+        var step = event.step;
+        //    trackInfo.step += step;
+        if ((trackInfoStep + step) < maxStep)
+        {
+          trackInfoStep += step;
+          var time = this.getTime(trackInfoStep);
+          event.play(this, trackInfo, time, trackInfoStep, trackInfo.output);
+          ++index;
+        } else
+        {
+          break;
+        }
       }
+      trackInfo.index[j].step = trackInfoStep;
+      trackInfo.index[j].index = index;
     }
-    trackInfo.index = index;
     if (trackInfo.endOfTrack && (!trackInfo.endOfTrack.end))
     {
       if (trackInfo.endOfTrack.time < performance.now())
